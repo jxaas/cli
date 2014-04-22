@@ -77,12 +77,17 @@ class ConnectInstance(cliff.command.Command):
         bundle_type = parsed_args.bundle_type
         if bundle_type in ['mysql', 'multimysql']:
           relation = 'mysql'
+        if bundle_type in ['mongodb']:
+          relation = 'mongodb'
+        if bundle_type in ['pg']:
+          relation = 'pgsql'
         if not relation:
           raise Exception("Unhandled bundle_type")
 
         relation_properties = client.get_relation_properties(bundle_type, parsed_args.instance, relation)
         properties = relation_properties['Properties']
 
+        env=os.environ.copy()
         if relation == 'mysql':
           command = ['mysql']
           command = command + [ '--user=' + properties['user'] ]
@@ -90,4 +95,20 @@ class ConnectInstance(cliff.command.Command):
           command = command + [ '--password=' + properties['password'] ]
           command = command + [ '--database=' + properties['database'] ]
 
-        subprocess.call(command)
+        if relation == 'mongodb':
+          command = ['mongo']
+          command = command + [ '%s:%s/%s' % (properties['hostname'], properties['port'], properties['replset']) ]
+
+        if relation == 'pgsql':
+          print properties
+          command = ['psql']
+          command = command + [ '--username=' + properties['user'] ]
+          command = command + [ '--host=' + properties['host'] ]
+          command = command + [ '--password']
+          command = command + [ '--dbname=' + properties['database'] ]
+          #env['PGUSER'] = properties['user']
+          env['PGPASSWORD'] = properties['password']
+          print env['PGPASSWORD']
+
+        p = subprocess.Popen(command, env=env)
+        p.wait()
