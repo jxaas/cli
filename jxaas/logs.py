@@ -21,9 +21,6 @@ class ListLog(cliff.lister.Lister):
         client = utils.get_jxaas_client(self)
 
         log = client.get_log(parsed_args.bundle_type, parsed_args.instance)
-        print log
-        relation_properties = relation_properties['Properties']
-        columns = ('Key',
-                   'Value')
-        data = [(k, v) for k, v in relation_properties.iteritems()]
+        columns = ('Line',)
+        data = [(v,) for v in log]
         return (columns, data)
