@@ -1,5 +1,6 @@
 import logging
 import os
+import subprocess
 
 import cliff.show
 import cliff.lister
@@ -56,3 +57,37 @@ class CreateInstance(cliff.command.Command):
         config = None
         units = None
         client.ensure_instance(parsed_args.bundle_type, parsed_args.instance, config=config, units=units)
+
+
+class ConnectInstance(cliff.command.Command):
+    "Connect to a JXaaS instance, by launching the appropriate tool"
+
+    log = logging.getLogger(__name__)
+
+    def get_parser(self, prog_name):
+        parser = super(ConnectInstance, self).get_parser(prog_name)
+        parser.add_argument('bundle_type')
+        parser.add_argument('instance')
+        return parser
+
+    def take_action(self, parsed_args):
+        client = utils.get_jxaas_client(self)
+
+        relation = None
+        bundle_type = parsed_args.bundle_type
+        if bundle_type in ['mysql', 'multimysql']:
+          relation = 'mysql'
+        if not relation:
+          raise Exception("Unhandled bundle_type")
+
+        relation_properties = client.get_relation_properties(bundle_type, parsed_args.instance, relation)
+        properties = relation_properties['Properties']
+
+        if relation == 'mysql':
+          command = ['mysql']
+          command = command + [ '--user=' + properties['user'] ]
+          command = command + [ '--host=' + properties['host'] ]
+          command = command + [ '--password=' + properties['password'] ]
+          command = command + [ '--database=' + properties['database'] ]
+
+        subprocess.call(command)
