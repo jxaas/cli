@@ -25,7 +25,7 @@ class ListInstances(cliff.lister.Lister):
         return (columns, data)
 
 class DestroyInstance(cliff.command.Command):
-    "Delete a JXaaS instances"
+    "Delete a JXaaS instance"
 
     log = logging.getLogger(__name__)
 
@@ -38,3 +38,21 @@ class DestroyInstance(cliff.command.Command):
     def take_action(self, parsed_args):
         client = utils.get_jxaas_client(self)
         client.destroy_instance(parsed_args.bundle_type, parsed_args.instance)
+
+
+class CreateInstance(cliff.command.Command):
+    "Create a JXaaS instance"
+
+    log = logging.getLogger(__name__)
+
+    def get_parser(self, prog_name):
+        parser = super(CreateInstance, self).get_parser(prog_name)
+        parser.add_argument('bundle_type')
+        parser.add_argument('instance')
+        return parser
+
+    def take_action(self, parsed_args):
+        client = utils.get_jxaas_client(self)
+        config = None
+        units = None
+        client.ensure_instance(parsed_args.bundle_type, parsed_args.instance, config=config, units=units)
