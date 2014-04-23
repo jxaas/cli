@@ -104,11 +104,9 @@ class ConnectInstance(cliff.command.Command):
           command = ['psql']
           command = command + [ '--username=' + properties['user'] ]
           command = command + [ '--host=' + properties['host'] ]
-          command = command + [ '--password']
           command = command + [ '--dbname=' + properties['database'] ]
-          #env['PGUSER'] = properties['user']
+          #command = command + [ '--password']
           env['PGPASSWORD'] = properties['password']
-          print env['PGPASSWORD']
 
         p = subprocess.Popen(command, env=env)
         p.wait()
