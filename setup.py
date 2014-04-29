@@ -11,6 +11,7 @@ setup(
     description='CLI for Juju XaaS.',
     long_description=open('README.md').read(),
     install_requires=[
+      'cliff'
     ],
     scripts=[
      'bin/jxaas'
