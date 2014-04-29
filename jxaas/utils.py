@@ -1,4 +1,5 @@
 import logging
+import os
 
 from cliff.command import Command
 
@@ -9,5 +10,6 @@ def get_jxaas_client(command):
   username = '123'
   password= '123'
 
-  client = jujuxaas.client.Client(url="http://127.0.0.1:8080/xaas", tenant=tenant, username=username, password=password)
+  url = os.getenv('JXAAS_URL', "http://127.0.0.1:8080/xaas")
+  client = jujuxaas.client.Client(url=url, tenant=tenant, username=username, password=password)
   return client
