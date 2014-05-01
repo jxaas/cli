@@ -85,7 +85,6 @@ class ConnectInstance(cliff.command.Command):
           raise Exception("Unhandled bundle_type")
 
         relation_properties = client.get_relation_properties(bundle_type, parsed_args.instance, relation)
-        print relation_properties
         properties = relation_properties.get('Properties', {})
         addresses = relation_properties.get('PublicAddresses', [])
 
