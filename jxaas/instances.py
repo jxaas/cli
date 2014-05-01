@@ -85,27 +85,38 @@ class ConnectInstance(cliff.command.Command):
           raise Exception("Unhandled bundle_type")
 
         relation_properties = client.get_relation_properties(bundle_type, parsed_args.instance, relation)
-        properties = relation_properties['Properties']
+        print relation_properties
+        properties = relation_properties.get('Properties', {})
+        addresses = relation_properties.get('PublicAddresses', [])
 
-        env=os.environ.copy()
+        host = None
+        if addresses:
+          host = addresses[0]
+
+        env = os.environ.copy()
         if relation == 'mysql':
+          if not host:
+            host = properties['host']
           command = ['mysql']
           command = command + [ '--user=' + properties['user'] ]
-          command = command + [ '--host=' + properties['host'] ]
+          command = command + [ '--host=' + host ]
           command = command + [ '--password=' + properties['password'] ]
           command = command + [ '--database=' + properties['database'] ]
 
         if relation == 'mongodb':
+          if not host:
+            host = properties['hostname']
           command = ['mongo']
-          command = command + [ '%s:%s/%s' % (properties['hostname'], properties['port'], properties['replset']) ]
+          command = command + [ '%s:%s/%s' % (host, properties['port'], properties['replset']) ]
 
         if relation == 'pgsql':
-          print properties
+          if not host:
+            host = properties['host']
           command = ['psql']
           command = command + [ '--username=' + properties['user'] ]
-          command = command + [ '--host=' + properties['host'] ]
+          command = command + [ '--host=' + host ]
           command = command + [ '--dbname=' + properties['database'] ]
-          #command = command + [ '--password']
+          # command = command + [ '--password']
           env['PGPASSWORD'] = properties['password']
 
         p = subprocess.Popen(command, env=env)
