@@ -101,6 +101,8 @@ class ConnectInstance(cliff.command.Command):
           command = command + [ '--host=' + host ]
           command = command + [ '--password=' + properties['password'] ]
           command = command + [ '--database=' + properties['database'] ]
+          if properties['port']:
+            command = command + [ '--port=' + properties['port'] ]
 
         if relation == 'mongodb':
           if not host:
