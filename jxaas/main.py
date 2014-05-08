@@ -39,6 +39,11 @@ class CliApp(App):
         if err:
             self.log.debug('got an error: %s', err)
 
+    def configure_logging(self):
+        super(CliApp, self).configure_logging()
+
+        logging.getLogger("requests").setLevel(logging.WARNING)
+        logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 def main(argv=sys.argv[1:]):
     app = CliApp()
