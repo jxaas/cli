@@ -21,6 +21,10 @@ class CliApp(App):
       command_manager.add_command('destroy-instance', instances.DestroyInstance)
       command_manager.add_command('create-instance', instances.CreateInstance)
       command_manager.add_command('connect-instance', instances.ConnectInstance)
+
+      # Alias
+      command_manager.add_command('connect', instances.ConnectInstance)
+
       # command_manager.add_command('complete', cliff.complete.CompleteCommand)
       super(CliApp, self).__init__(
             description='JXaaS CLI app',
