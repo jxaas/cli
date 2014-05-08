@@ -107,12 +107,16 @@ class ConnectInstance(cliff.command.Command):
             command = command + [ '--port=' + properties['port'] ]
 
         if relation == 'mongodb':
+          if not 'port' in properties:
+            raise Exception("Service not ready")
           if not host:
             host = properties['hostname']
           command = ['mongo']
           command = command + [ '%s:%s/%s' % (host, properties['port'], properties['replset']) ]
 
         if relation == 'pgsql':
+          if not 'user' in properties:
+            raise Exception("Service not ready")
           if not host:
             host = properties['host']
           command = ['psql']
