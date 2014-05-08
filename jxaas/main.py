@@ -5,6 +5,7 @@ from cliff.app import App
 
 import cliff.commandmanager
 
+import instanceconfig
 import instances
 import logs
 import metrics
@@ -25,6 +26,8 @@ class CliApp(App):
       command_manager.add_command('list-instances', instances.ListInstances)
       command_manager.add_command('list-metrics', metrics.ListMetrics)
       command_manager.add_command('get-metric', metrics.GetMetricValues)
+      command_manager.add_command('get-config', instanceconfig.GetConfig)
+      command_manager.add_command('set-config', instanceconfig.SetConfig)
 
       # Alias
       command_manager.add_command('connect', instances.ConnectInstance)
