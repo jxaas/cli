@@ -122,5 +122,6 @@ class ConnectInstance(cliff.command.Command):
           # command = command + [ '--password']
           env['PGPASSWORD'] = properties['password']
 
+        self.log.debug("Running command: %s", " ".join(command))
         p = subprocess.Popen(command, env=env)
         p.wait()
