@@ -94,6 +94,8 @@ class ConnectInstance(cliff.command.Command):
 
         env = os.environ.copy()
         if relation == 'mysql':
+          if not 'user' in properties:
+            raise Exception("Service not ready")
           if not host:
             host = properties['host']
           command = ['mysql']
