@@ -10,6 +10,7 @@ import instances
 import logs
 import metrics
 import properties
+import bundletypes
 
 class CliApp(App):
 
@@ -17,6 +18,7 @@ class CliApp(App):
 
     def __init__(self):
       command_manager = cliff.commandmanager.CommandManager('jxaas')
+      command_manager.add_command('list-bundles', bundletypes.ListBundleTypes)
       command_manager.add_command('list-properties', properties.ListProperties)
       command_manager.add_command('list-log', logs.ListLog)
       command_manager.add_command('list-instances', instances.ListInstances)
