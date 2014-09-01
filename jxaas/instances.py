@@ -94,35 +94,6 @@ class GetInstanceHealth(cliff.lister.Lister):
         data = [(k,v) for k, v in health_info['Units'].iteritems()]
         return (columns, data)
 
-class GetInstanceScaling(cliff.lister.Lister):
-    "Gets the scaling state of an instance."
-
-    log = logging.getLogger(__name__)
-
-    def get_parser(self, prog_name):
-        parser = super(GetInstanceScaling, self).get_parser(prog_name)
-        parser.add_argument('bundle_type')
-        parser.add_argument('instance')
-        return parser
-
-    def take_action(self, parsed_args):
-        client = utils.get_jxaas_client(self)
-
-        scaling = client.get_scaling(parsed_args.bundle_type, parsed_args.instance)
-        #print scaling
-
-        columns = ('Metric','MetricCurrent', 'MetricMin', 'MetricMax', 'ScaleCurrent', 'ScaleMin', 'ScaleMax', 'ScaleTarget')
-        policy = scaling['Policy']
-        data = [(policy.get('MetricName'),
-                 scaling.get('MetricCurrent'),
-                 policy.get('MetricMin'),
-                 policy.get('MetricMax'),
-                 scaling.get('ScaleCurrent'),
-                 policy.get('ScaleMin'),
-                 policy.get('ScaleMax'),
-                 scaling.get('ScaleTarget'))]
-        return (columns, data)
-
 class ConnectInstance(cliff.command.Command):
     "Connect to a JXaaS instance, by launching the appropriate tool"
 

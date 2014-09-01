@@ -8,6 +8,7 @@ import cliff.commandmanager
 import bundletypes
 import instanceconfig
 import instances
+import instancescaling
 import logs
 import metrics
 import properties
@@ -26,7 +27,8 @@ class CliApp(App):
       command_manager.add_command('create-instance', instances.CreateInstance)
       command_manager.add_command('repair-instance', instances.RepairInstance)
       command_manager.add_command('get-health', instances.GetInstanceHealth)
-      command_manager.add_command('get-scaling', instances.GetInstanceScaling)
+      command_manager.add_command('get-scaling', instancescaling.GetInstanceScaling)
+      command_manager.add_command('set-scaling', instancescaling.SetInstanceScaling)
       command_manager.add_command('connect-instance', instances.ConnectInstance)
       command_manager.add_command('list-instances', instances.ListInstances)
       command_manager.add_command('list-metrics', metrics.ListMetrics)
