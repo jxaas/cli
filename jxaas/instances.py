@@ -109,10 +109,18 @@ class GetInstanceScaling(cliff.lister.Lister):
         client = utils.get_jxaas_client(self)
 
         scaling = client.get_scaling(parsed_args.bundle_type, parsed_args.instance)
-        print scaling
+        #print scaling
 
-        columns = ('Unit','Healthy')
-        data = [(k,v) for k, v in scaling['Units'].iteritems()]
+        columns = ('Metric','MetricCurrent', 'MetricMin', 'MetricMax', 'ScaleCurrent', 'ScaleMin', 'ScaleMax', 'ScaleTarget')
+        policy = scaling['Policy']
+        data = [(policy.get('MetricName'),
+                 scaling.get('MetricCurrent'),
+                 policy.get('MetricMin'),
+                 policy.get('MetricMax'),
+                 scaling.get('ScaleCurrent'),
+                 policy.get('ScaleMin'),
+                 policy.get('ScaleMax'),
+                 scaling.get('ScaleTarget'))]
         return (columns, data)
 
 class ConnectInstance(cliff.command.Command):
