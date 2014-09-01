@@ -38,17 +38,19 @@ class SetInstanceScaling(cliff.command.Command):
         return parser
 
     def take_action(self, parsed_args):
+        args = vars(parsed_args)
+        print args
         policy = {}
-        if 'scale-min' in parsed_args:
-          policy['ScaleMin'] = parsed_args['scale-min']
-        if 'scale-max' in parsed_args:
-          policy['ScaleMax'] = parsed_args['scale-max']
-        if 'metric-min' in parsed_args:
-          policy['MetricMin'] = parsed_args['metric-min']
-        if 'metric-max' in parsed_args:
-          policy['MetricMax'] = parsed_args['metric-max']
-        if 'metric-name' in parsed_args:
-          policy['MetricName'] = parsed_args['metric-name']
+        if args['scale_min'] is not None:
+          policy['ScaleMin'] = int(args['scale_min'])
+        if args['scale_max'] is not None:
+          policy['ScaleMax'] = int(args['scale_max'])
+        if args['metric_min'] is not None:
+          policy['MetricMin'] = float(args['metric_min'])
+        if args['metric_max'] is not None:
+          policy['MetricMax'] = float(args['metric_max'])
+        if args['metric_name'] is not None:
+          policy['MetricName'] = args['metric_name']
 
         client = utils.get_jxaas_client(self)
         client.set_scaling(parsed_args.bundle_type, parsed_args.instance, policy=policy)
