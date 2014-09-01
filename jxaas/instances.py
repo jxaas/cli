@@ -41,6 +41,22 @@ class DestroyInstance(cliff.command.Command):
         client.destroy_instance(parsed_args.bundle_type, parsed_args.instance)
 
 
+class RepairInstance(cliff.command.Command):
+    "Repair a JXaaS instance"
+
+    log = logging.getLogger(__name__)
+
+    def get_parser(self, prog_name):
+        parser = super(RepairInstance, self).get_parser(prog_name)
+        parser.add_argument('bundle_type')
+        parser.add_argument('instance')
+        return parser
+
+    def take_action(self, parsed_args):
+        client = utils.get_jxaas_client(self)
+        client.repair_instance(parsed_args.bundle_type, parsed_args.instance)
+
+
 class CreateInstance(cliff.command.Command):
     "Create a JXaaS instance"
 
@@ -58,6 +74,25 @@ class CreateInstance(cliff.command.Command):
         units = None
         client.ensure_instance(parsed_args.bundle_type, parsed_args.instance, config=config, units=units)
 
+class GetInstanceHealth(cliff.lister.Lister):
+    "Gets the health of an instance instance."
+
+    log = logging.getLogger(__name__)
+
+    def get_parser(self, prog_name):
+        parser = super(GetInstanceHealth, self).get_parser(prog_name)
+        parser.add_argument('bundle_type')
+        parser.add_argument('instance')
+        return parser
+
+    def take_action(self, parsed_args):
+        client = utils.get_jxaas_client(self)
+
+        health_info = client.get_health(parsed_args.bundle_type, parsed_args.instance)
+
+        columns = ('Unit','Healthy')
+        data = [(k,v) for k, v in health_info['Units'].iteritems()]
+        return (columns, data)
 
 class ConnectInstance(cliff.command.Command):
     "Connect to a JXaaS instance, by launching the appropriate tool"
