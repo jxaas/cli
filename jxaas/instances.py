@@ -116,6 +116,8 @@ class ConnectInstance(cliff.command.Command):
           relation = 'mongodb'
         if bundle_type in ['pg']:
           relation = 'pgsql'
+        if bundle_type in ['cassandra']:
+          relation = 'cassandra'
         if not relation:
           raise Exception("Unhandled bundle_type")
 
@@ -140,6 +142,16 @@ class ConnectInstance(cliff.command.Command):
           command = command + [ '--database=' + properties['database'] ]
           if 'port' in properties:
             command = command + [ '--port=' + properties['port'] ]
+
+        if relation == 'cassandra':
+          if not 'private-address' in properties:
+            raise Exception("Service not ready")
+          if not host:
+            host = properties['private-address']
+          port = properties['port'] or '9160'
+          command = ['cqlsh']
+          command = command + [ host ]
+          command = command + [ port ]
 
         if relation == 'mongodb':
           if not 'port' in properties:
