@@ -91,8 +91,8 @@ class GetInstanceHealth(cliff.lister.Lister):
 
         health_info = client.get_health(parsed_args.bundle_type, parsed_args.instance)
 
-        columns = ('Unit','Healthy')
-        data = [(k,v) for k, v in health_info['Units'].iteritems()]
+        columns = ('Unit', 'Healthy')
+        data = [(k, v) for k, v in health_info['Units'].iteritems()]
         return (columns, data)
 
 class ConnectInstance(cliff.command.Command):
