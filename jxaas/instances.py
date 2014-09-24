@@ -6,6 +6,7 @@ import cliff.show
 import cliff.lister
 import utils
 
+import jujuxaas.tls_proxy
 
 class ListInstances(cliff.lister.Lister):
     "List JXaaS instances"
@@ -129,19 +130,39 @@ class ConnectInstance(cliff.command.Command):
         if addresses:
           host = addresses[0]
 
-        env = os.environ.copy()
+        protocol = properties['protocol']
+
+        use_tls_proxy = protocol == 'tls';
+
         if relation == 'mysql':
           if not 'user' in properties:
             raise Exception("Service not ready")
           if not host:
             host = properties['host']
+          if 'port' in properties:
+            port = properties['port']
+          else:
+            port = 3306
+
+        if use_tls_proxy:
+          # TODO: Assign random port
+          listen_address = ('127.0.0.1', 10000)
+          forward_address = (host, int(port))
+          # TODO: Use real security options here
+          ssl_context = {}
+          tls_proxy = jujuxaas.tls_proxy.TlsProxy(ssl_context, listen_address, forward_address)
+          tls_proxy.start()
+          host = listen_address[0]
+          port = listen_address[1]
+
+        env = os.environ.copy()
+        if relation == 'mysql':
           command = ['mysql']
           command = command + [ '--user=' + properties['user'] ]
           command = command + [ '--host=' + host ]
           command = command + [ '--password=' + properties['password'] ]
           command = command + [ '--database=' + properties['database'] ]
-          if 'port' in properties:
-            command = command + [ '--port=' + properties['port'] ]
+          command = command + [ '--port=' + str(port) ]
 
         if relation == 'cassandra':
           if not 'private-address' in properties:
