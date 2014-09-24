@@ -139,11 +139,31 @@ class ConnectInstance(cliff.command.Command):
             raise Exception("Service not ready")
           if not host:
             host = properties['host']
-          if 'port' in properties:
-            port = properties['port']
-          else:
-            port = 3306
+          port = properties['port'] or '3306'
 
+        if relation == 'cassandra':
+          if not 'private-address' in properties:
+            raise Exception("Service not ready")
+          if not host:
+            host = properties['private-address']
+          port = properties['port'] or '9160'
+
+        if relation == 'mongodb':
+          if not 'port' in properties:
+            raise Exception("Service not ready")
+          if not host:
+            host = properties['hostname']
+          port = properties['port'] or '27017'
+
+        if relation == 'pgsql':
+          if not 'user' in properties:
+            raise Exception("Service not ready")
+          if not host:
+            host = properties['host']
+          port = properties['port'] or '5432'
+
+
+        # Start the tls proxy if we need one
         if use_tls_proxy:
           # TODO: Assign random port
           listen_address = ('127.0.0.1', 10000)
@@ -165,31 +185,17 @@ class ConnectInstance(cliff.command.Command):
           command = command + [ '--port=' + str(port) ]
 
         if relation == 'cassandra':
-          if not 'private-address' in properties:
-            raise Exception("Service not ready")
-          if not host:
-            host = properties['private-address']
-          port = properties['port'] or '9160'
-          command = ['cqlsh']
-          command = command + [ host ]
-          command = command + [ port ]
+          command = ['cqlsh', host, port]
 
         if relation == 'mongodb':
-          if not 'port' in properties:
-            raise Exception("Service not ready")
-          if not host:
-            host = properties['hostname']
           command = ['mongo']
-          command = command + [ '%s:%s/%s' % (host, properties['port'], properties['replset']) ]
+          command = command + [ '%s:%s/%s' % (host, port, properties['replset']) ]
 
         if relation == 'pgsql':
-          if not 'user' in properties:
-            raise Exception("Service not ready")
-          if not host:
-            host = properties['host']
           command = ['psql']
           command = command + [ '--username=' + properties['user'] ]
           command = command + [ '--host=' + host ]
+          command = command + [ '--port=' + port ]
           command = command + [ '--dbname=' + properties['database'] ]
           # command = command + [ '--password']
           env['PGPASSWORD'] = properties['password']
@@ -197,3 +203,6 @@ class ConnectInstance(cliff.command.Command):
         self.log.debug("Running command: %s", " ".join(command))
         p = subprocess.Popen(command, env=env)
         p.wait()
+
+        # We don't need to stop tls_proxy, because it's a daemon and we're exiting
+        # tls_proxy.stop()
