@@ -16,7 +16,7 @@ def get_jxaas_client(command):
   #auth = jujuxaas.auth.direct.AuthDirect(url=url, tenant=tenant, username=username, password=password)
 
   url = os.getenv('JXAAS_URL', "http://127.0.0.1:5000")
-  auth = jujuxaas.auth.openstack.AuthOpenstack(url=url, username=username, password=password, tenant=tenant)
+  auth = jujuxaas.auth.openstack.AuthOpenstack(url=url, tenant=tenant, username=username, password=password)
 
   client = jujuxaas.client.Client(auth)
   return client
