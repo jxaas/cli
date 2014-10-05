@@ -67,11 +67,19 @@ class CreateInstance(cliff.command.Command):
         parser = super(CreateInstance, self).get_parser(prog_name)
         parser.add_argument('bundle_type')
         parser.add_argument('instance')
+        parser.add_argument('config', nargs='*')
         return parser
 
     def take_action(self, parsed_args):
         client = utils.get_jxaas_client(self)
-        config = None
+        config = {}
+        config_args = parsed_args.config
+        for config_arg in config_args:
+          tokens = config_arg.split('=', 2)
+          if len(tokens) != 2:
+            raise Exception("Expected config format 'key=value', got '" + config_args + "'")
+          config[tokens[0]] = tokens[1]
+
         units = None
         client.ensure_instance(parsed_args.bundle_type, parsed_args.instance, config=config, units=units)
 

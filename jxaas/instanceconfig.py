@@ -46,6 +46,7 @@ class GetConfig(cliff.lister.Lister):
 
         info = client.get_instance_state(parsed_args.bundle_type, parsed_args.instance)
         columns = ('Config Key','Config Value')
+        self.log.debug("Instance state: %s", info)
         data = [(k, v,) for k, v in info['Config'].iteritems()]
         return (columns, data)
 
