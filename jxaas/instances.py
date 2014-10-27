@@ -138,7 +138,7 @@ class ConnectInstance(cliff.command.Command):
         if addresses:
           host = addresses[0]
 
-        protocol = properties['protocol']
+        protocol = properties.get('protocol', '')
 
         use_tls_proxy = protocol == 'tls';
 
