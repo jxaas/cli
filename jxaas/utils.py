@@ -17,6 +17,8 @@ def get_jxaas_client(command):
     url = os.getenv('JXAAS_URL', "http://127.0.0.1:8080/xaas")
     auth = jujuxaas.auth.direct.AuthDirect(url=url, tenant=tenant, username=username, password=password)
   elif auth == 'openstack':
+    if not jujuxaas.auth.openstack.AuthOpenstack.available():
+      raise Exception("Openstack keystone API not available")
     url = os.getenv('JXAAS_URL', "http://127.0.0.1:5000")
     auth = jujuxaas.auth.openstack.AuthOpenstack(url=url, tenant=tenant, username=username, password=password)
   else:
