@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 
 from cliff.command import Command
 
@@ -26,3 +27,26 @@ def get_jxaas_client(command):
 
   client = jujuxaas.client.Client(auth)
   return client
+
+
+def wait_for(fn):
+  # TODO: Timeout
+  while True:
+    done = fn()
+    if done:
+      return done
+    time.sleep(1)
+
+
+def wait_jxaas_started(client, bundle_type, service_name):
+  def jxaas_started():
+    service_state = client.get_instance_state(bundle_type, service_name)
+    if service_state:
+      #log.debug("Service state for %s => %s", service_name, service_state)
+      status = service_state.get('Status')
+      if status == 'started':
+        return status
+    return None
+
+  return wait_for(jxaas_started)
+

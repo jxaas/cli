@@ -24,6 +24,7 @@ class CliApp(App):
       command_manager.add_command('list-log', logs.ListLog)
       command_manager.add_command('list-instances', instances.ListInstances)
       command_manager.add_command('destroy-instance', instances.DestroyInstance)
+      command_manager.add_command('wait-instance', instances.WaitInstance)
       command_manager.add_command('create-instance', instances.CreateInstance)
       command_manager.add_command('repair-instance', instances.RepairInstance)
       command_manager.add_command('get-health', instances.GetInstanceHealth)

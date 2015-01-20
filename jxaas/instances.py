@@ -58,6 +58,23 @@ class RepairInstance(cliff.command.Command):
         client.repair_instance(parsed_args.bundle_type, parsed_args.instance)
 
 
+class WaitInstance(cliff.command.Command):
+    "Wait for a JXaaS instance to be ready"
+
+    log = logging.getLogger(__name__)
+
+    def get_parser(self, prog_name):
+        parser = super(WaitInstance, self).get_parser(prog_name)
+        parser.add_argument('bundle_type')
+        parser.add_argument('instance')
+        return parser
+
+    def take_action(self, parsed_args):
+        client = utils.get_jxaas_client(self)
+
+        utils.wait_jxaas_started(client, parsed_args.bundle_type, parsed_args.instance)
+
+
 class CreateInstance(cliff.command.Command):
     "Create a JXaaS instance"
 
