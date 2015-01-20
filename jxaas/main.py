@@ -39,6 +39,9 @@ class CliApp(App):
 
       # Alias
       command_manager.add_command('connect', instances.ConnectInstance)
+      command_manager.add_command('destroy', instances.DestroyInstance)
+      command_manager.add_command('list', instances.ListInstances)
+      command_manager.add_command('wait', instances.WaitInstance)
 
       # command_manager.add_command('complete', cliff.complete.CompleteCommand)
       super(CliApp, self).__init__(
