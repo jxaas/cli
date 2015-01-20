@@ -174,7 +174,7 @@ class ConnectInstance(cliff.command.Command):
           port = properties['port'] or '9160'
 
         if relation == 'mongodb':
-          if not 'port' in properties:
+          if not 'port' in properties or not 'replset' in properties:
             raise Exception("Service not ready")
           if not host:
             host = properties['hostname']
